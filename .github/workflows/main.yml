@@ -20,7 +20,7 @@ jobs:
         uses: battila7/get-version-action@v2
       - uses: vimtor/action-zip@v1
         with:
-          files: *
+          files: '.'
           dest: module.zip
       - name: Create or Update Module
         run: |
