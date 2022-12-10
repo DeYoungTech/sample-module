@@ -4,11 +4,13 @@ on:
     tags:
       - v*
 env:
+  # Update the following Variables for you module
   TFMODULE_ORGANIZATION_NAME: deyoung
   TFMODULE_MODULE_NAME: sample-module
   TFMODULE_MODULE_PROVIDER: aws
   TFMODULE_MODULE_DESCRIPTION: 'This is my sample-module description'
   TFMODULE_MODULE_TAGS: '["test","test2"]'
+  TFMODULE_SOURCE_DIRECTORY: '.'
 jobs:
   deploy:
     name: Zip and Deploy Module Version
@@ -20,7 +22,7 @@ jobs:
         uses: battila7/get-version-action@v2
       - uses: vimtor/action-zip@v1
         with:
-          files: '.'
+          files: '${{ env.TFMODULE_SOURCE_DIRECTORY }}'
           dest: module.zip
       - name: Create or Update Module
         run: |
