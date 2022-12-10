@@ -1,0 +1,43 @@
+name: Zip and Deploy Module Version
+on:
+  push:
+    tags:
+      - v*
+env:
+  TFMODULE_ORGANIZATION_NAME: deyoung
+  TFMODULE_MODULE_NAME: sample-module
+  TFMODULE_MODULE_PROVIDER: aws
+  TFMODULE_MODULE_DESCRIPTION: 'This is my sample-module description'
+  TFMODULE_MODULE_TAGS: '["test","test2"]'
+jobs:
+  deploy:
+    name: Zip and Deploy Module Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - id: get_version
+        uses: battila7/get-version-action@v2
+      - uses: vimtor/action-zip@v1
+        with:
+          files: ${{ github.workspace }}
+          dest: module.zip
+      - name: Create or Update Module
+        run: |
+          curl -L http://docs.tfmodule.com/assets/scripts/tfmodule-module-create-or-update.sh | bash -s -- \
+          --organization_name=${{ env.TFMODULE_ORGANIZATION_NAME }} \
+          --module_name=${{ env.TFMODULE_MODULE_NAME }} \
+          --module_provider=${{ env.TFMODULE_MODULE_PROVIDER }} \
+          --api_token=${{ secrets.TFMODULE_TOKEN }} \
+          --module_source=https://app.tfmodule.com \
+          --module_description='${{ env.TFMODULE_MODULE_DESCRIPTION }}' \
+          --module_tags='${{ env.TFMODULE_MODULE_TAGS }}'
+      - name: Create Version
+        run: |
+          curl -L https://docs.tfmodule.com/assets/scripts/tfmodule-version-new.sh | bash -s -- \
+          --organization_name=${{ env.TFMODULE_ORGANIZATION_NAME }} \
+          --module_name=${{ env.TFMODULE_MODULE_NAME }} \
+          --module_provider=${{ env.TFMODULE_MODULE_PROVIDER }} \
+          --module_version=${{ steps.get_version.outputs.version-without-v }} \
+          --module_zip=${{ github.workspace }}/module.zip \
+          --api_token=${{ secrets.TFMODULE_TOKEN }}
