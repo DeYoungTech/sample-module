@@ -8,6 +8,7 @@ env:
   TFMODULE_ORGANIZATION_NAME: deyoung
   TFMODULE_MODULE_NAME: sample-module
   TFMODULE_MODULE_PROVIDER: aws
+  TFMODULE_MODULE_SOURCE: https://github.com/DeYoungTech/sample-module
   TFMODULE_MODULE_DESCRIPTION: 'This is my sample-module description'
   TFMODULE_MODULE_TAGS: '["test","test2"]'
   TFMODULE_SOURCE_DIRECTORY: '.'
@@ -31,7 +32,7 @@ jobs:
           --module_name=${{ env.TFMODULE_MODULE_NAME }} \
           --module_provider=${{ env.TFMODULE_MODULE_PROVIDER }} \
           --api_token=${{ secrets.TFMODULE_TOKEN }} \
-          --module_source=https://app.tfmodule.com \
+          --module_source=${{ env.TFMODULE_MODULE_SOURCE }} \
           --module_description='${{ env.TFMODULE_MODULE_DESCRIPTION }}' \
           --module_tags='${{ env.TFMODULE_MODULE_TAGS }}'
       - name: Create Version
